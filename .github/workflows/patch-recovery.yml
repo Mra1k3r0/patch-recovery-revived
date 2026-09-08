@@ -9,8 +9,13 @@ on:
 
       recovery_link:
         description: 'Enter the Direct Download Link (.img / .lz4 / .zip / .tar):'
-        required: true   
-              
+        required: true
+
+      filename:
+        description: 'Output filename without extension (default: recovery)'
+        required: false
+        default: 'recovery'
+
 jobs:
   patch-recovery-revived:
     runs-on: ubuntu-latest
@@ -24,6 +29,8 @@ jobs:
           
       - name: Running patch-recovery-revived
         run: |
+          FILENAME="${{ github.event.inputs.filename }}"
+          export FILENAME="${FILENAME:-recovery}"
           GOFILE=1 bash patch-recovery.sh "${{ github.event.inputs.recovery_link }}" "${{ github.event.inputs.model }}"
       
       - name: Uploading Artifact

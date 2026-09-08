@@ -59,11 +59,16 @@ fi
 
 # Downloading/copying the recovery
 download_recovery(){
+    local DEST_NAME="${FILENAME:-recovery}"
     if [[ "${RECOVERY_LINK}" =~ ^https?:// ]]; then
         log "[INFO] Downloading" "${RECOVERY_LINK}\n"
-        curl -L "${RECOVERY_LINK}" -o "${WDIR}/recovery/$(basename "${RECOVERY_LINK}")"
+        local BASENAME="$(basename "${RECOVERY_LINK}")"
+        local EXT="${BASENAME##*.}"
+        # Use provided filename, preserving original extension
+        curl -L "${RECOVERY_LINK}" -o "${WDIR}/recovery/${DEST_NAME}.${EXT}"
     elif [ -f "${RECOVERY_LINK}" ]; then
-        cp "${RECOVERY_LINK}" "${WDIR}/recovery/"
+        local EXT="${RECOVERY_LINK##*.}"
+        cp "${RECOVERY_LINK}" "${WDIR}/recovery/${DEST_NAME}.${EXT}"
     else
         warn "[ERROR] Invalid input" "not a URL or file.\n"
         warn "If you entered a URL, make sure it begins with" "'http://' or 'https://'\n"
